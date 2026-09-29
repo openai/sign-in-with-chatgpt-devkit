@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-electron/
+examples/paste-perfect/native/build/
+.DS_Store
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+auth.json
+chatgpt-auth*.json
+chatgpt-host*.json
+.chatgpt-auth*
+preferences.json
+*.log
+examples/component-gallery/public/references/

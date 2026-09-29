@@ -1,0 +1,29 @@
+{
+  "name": "sign-in-with-chatgpt",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @siwc/local && npm run build -w @siwc/react && npm run build -w @siwc/paste-perfect && npm run build -w @siwc/component-gallery",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "dev": "npm run build && npm run start -w @siwc/paste-perfect",
+    "start": "npm run start -w @siwc/paste-perfect",
+    "dev:web": "npm run build -w @siwc/local && npm run build -w @siwc/react && npm run dev:web -w @siwc/paste-perfect",
+    "dev:gallery": "npm run build -w @siwc/react && npm run dev -w @siwc/component-gallery",
+    "licenses:generate": "node scripts/generate-third-party-notices.mjs",
+    "licenses:check": "node scripts/generate-third-party-notices.mjs --check",
+    "test": "npm run build -w @siwc/local && node --experimental-strip-types --test packages/local/test/*.test.mjs examples/paste-perfect/test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,3 @@
+# Preserve upstream licence text, including whitespace.
+THIRD_PARTY_NOTICES.md -whitespace
+assets/fonts/*-OFL.txt -whitespace

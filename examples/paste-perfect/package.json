@@ -1,0 +1,29 @@
+{
+  "name": "@siwc/paste-perfect",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "build": "node native/build.mjs && vite build && esbuild electron/main.ts --bundle --platform=node --format=esm --packages=external --outfile=dist-electron/main.js && esbuild electron/preload.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist-electron/preload.cjs",
+    "typecheck": "tsc --noEmit",
+    "start": "electron .",
+    "dev:web": "vite --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@siwc/local": "0.1.0",
+    "@siwc/react": "0.1.0",
+    "lucide-react": "^0.577.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "electron": "^42.11.4",
+    "esbuild": "^0.28.2",
+    "vite": "^8.3.0"
+  },
+  "license": "UNLICENSED"
+}
