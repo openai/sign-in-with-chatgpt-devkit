@@ -12,7 +12,7 @@ Add Sign in with ChatGPT to apps that run on a user's local machine. Includes a 
 
 ## Run Paste Perfect
 
-Requires macOS 13 or later, Node.js 22.12 or later, and Xcode Command Line Tools.
+Requires macOS 14 or later, Node.js 22.12 or later, and Xcode Command Line Tools.
 
 ```sh
 npm ci
@@ -57,4 +57,4 @@ External pull requests are not accepted; see [contribution policy](CONTRIBUTING.
 
 ## Licence
 
-A custom licence for this repository is pending. First-party package metadata is marked `UNLICENSED` until that licence is provided. Third-party fonts and dependencies retain their own licences; see [third-party notices](THIRD_PARTY_NOTICES.md) and the [dependency inventory](docs/dependency-inventory.json). OpenAI trademarks remain subject to the [OpenAI brand guidelines](https://openai.com/brand/).
+OpenAI-authored code and documentation are licensed under the [Sign-in with ChatGPT DevKit Noncommercial License v1.0](LICENSE). Third-party fonts and dependencies retain their own licences; see [third-party notices](THIRD_PARTY_NOTICES.md) and the [dependency inventory](docs/dependency-inventory.json). OpenAI trademarks remain subject to the [OpenAI brand guidelines](https://openai.com/brand/).

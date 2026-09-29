@@ -5,6 +5,42 @@ extension NativeController {
     static func runRegressionCase(_ name: String) {
         let controller = NativeController()
         switch name {
+        case "launcher-environment":
+            for key in ["HOME", "TMPDIR", "PATH", "DYLD_INSERT_LIBRARIES", "NODE_OPTIONS", "NODE_EXTRA_CA_CERTS", "ELECTRON_RUN_AS_NODE", "ELECTRON_ENABLE_LOGGING"] {
+                setenv(key, "/untrusted-launcher/value", 1)
+            }
+            unsetenv("PASTE_PERFECT_DATA_DIR")
+            unsetenv("PASTE_PERFECT_REDIRECT_PORT")
+            let environment = try! DesktopHost.childEnvironment()
+            precondition(Set(environment.keys) == Set(["HOME", "PATH", "TMPDIR", "LANG", "PASTE_PERFECT_NATIVE_HOST"]))
+            precondition(environment["HOME"] != "/untrusted-launcher/value")
+            precondition(environment["TMPDIR"] != "/untrusted-launcher/value")
+            precondition(environment["PATH"] == "/usr/bin:/bin:/usr/sbin:/sbin")
+        case "valid-data-directory":
+            let directory = "/private/tmp/paste-perfect-environment-" + UUID().uuidString
+            try! FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: false, attributes: [.posixPermissions: 0o700])
+            defer { try? FileManager.default.removeItem(atPath: directory) }
+            setenv("PASTE_PERFECT_DATA_DIR", directory, 1)
+            unsetenv("PASTE_PERFECT_REDIRECT_PORT")
+            precondition(try! DesktopHost.childEnvironment()["PASTE_PERFECT_DATA_DIR"] == directory)
+        case "symlink-data-directory":
+            let directory = "/private/tmp/paste-perfect-environment-" + UUID().uuidString
+            let alias = directory + "-alias"
+            try! FileManager.default.createDirectory(atPath: directory + "/child", withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+            try! FileManager.default.createSymbolicLink(atPath: alias, withDestinationPath: directory)
+            defer { try? FileManager.default.removeItem(atPath: alias); try? FileManager.default.removeItem(atPath: directory) }
+            setenv("PASTE_PERFECT_DATA_DIR", alias + "/child", 1)
+            do { _ = try DesktopHost.childEnvironment(); preconditionFailure("A symlinked parent directory must be rejected") }
+            catch { }
+        case "invalid-data-directory":
+            setenv("PASTE_PERFECT_DATA_DIR", "/tmp", 1)
+            do { _ = try DesktopHost.childEnvironment(); preconditionFailure("A shared/symlinked override must be rejected") }
+            catch { }
+        case "invalid-redirect-port":
+            unsetenv("PASTE_PERFECT_DATA_DIR")
+            setenv("PASTE_PERFECT_REDIRECT_PORT", "--inspect", 1)
+            do { _ = try DesktopHost.childEnvironment(); preconditionFailure("A non-port override must be rejected") }
+            catch { }
         case "recipes":
             let custom = (1...100).map { ["id": "custom-\($0)", "name": "Custom \($0)"] }
             let builtins = builtinRecipes.map { ["id": $0.0, "name": $0.1] }

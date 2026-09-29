@@ -2,7 +2,7 @@
   "name": "@siwc/react",
   "version": "0.1.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "files": ["dist"],
   "main": "./dist/index.js",

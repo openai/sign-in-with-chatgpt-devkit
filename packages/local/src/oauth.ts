@@ -279,7 +279,8 @@ export async function authorize(
     }).toString();
     if (config.sendHostId) authorization.searchParams.set("ext_agent_host_id", hostId);
     if (!previous?.clientId) authorization.searchParams.set("agent_name_hint", config.appName);
-    if (previous?.profileIdToken) authorization.searchParams.set("id_token_hint", previous.profileIdToken);
+    // Keep saved tokens out of browser URLs, which default openers expose in
+    // process arguments. The verified subject check below binds saved profiles.
     if (previous?.identity?.email) authorization.searchParams.set("login_hint", previous.identity.email);
     if (options.reconsent) authorization.searchParams.set("prompt", "consent");
     await (config.openBrowser ?? defaultOpenBrowser)(authorization.toString());

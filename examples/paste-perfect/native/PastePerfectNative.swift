@@ -1,6 +1,7 @@
 import AppKit
 import ApplicationServices
 import CoreGraphics
+import Security
 
 private let maximumTextLength = 60_000
 private let builtinRecipes = [
@@ -9,11 +10,20 @@ private let builtinRecipes = [
 ]
 private let languages = ["English", "Spanish", "French", "German", "Portuguese", "Italian", "Hindi", "Tamil", "Japanese", "Korean", "Chinese"]
 
+// This handle is created by the native app. Its own stdin/stdout are never IPC.
+private var desktopInput: FileHandle?
+private var closeDesktop: (() -> Void)?
+
 private func emit(_ event: [String: Any]) {
     guard JSONSerialization.isValidJSONObject(event),
           let data = try? JSONSerialization.data(withJSONObject: event, options: [.sortedKeys]) else { return }
-    FileHandle.standardOutput.write(data)
-    FileHandle.standardOutput.write(Data([10]))
+    #if PASTE_PERFECT_NATIVE_TESTS
+    let output = FileHandle.standardOutput
+    #else
+    guard let output = desktopInput else { return }
+    #endif
+    do { try output.write(contentsOf: data + Data([10])) }
+    catch { /* Child termination closes the session and disarms the controller. */ }
 }
 
 private func attribute(_ element: AXUIElement, _ name: String) -> CFTypeRef? {
@@ -82,6 +92,7 @@ private struct Pending {
 }
 
 private final class NativeController: NSObject, NSApplicationDelegate {
+    private var shuttingDown = false
     private var connected = false
     private var recipes: [(String, String)] = []
     private var eventTap: CFMachPort?
@@ -561,30 +572,202 @@ private final class NativeController: NSObject, NSApplicationDelegate {
     private func hideProgress() { progress?.orderOut(nil); progress = nil }
 
     func shutdown() {
+        guard !shuttingDown else { return }
+        shuttingDown = true
         generation += 1
         afterMenuAction = nil
         permissionTimer?.invalidate()
         disarm(preservingMouseUp: false)
         cancelPending(emitEvent: false)
         menu?.cancelTracking()
+        closeDesktop?()
         NSApp.terminate(nil)
     }
 }
 
+// The native app owns the connection: an unrelated launcher never receives an
+// IPC endpoint. Code, resources, and the child runtime are sealed together.
+private enum DesktopHostError: Error { case invalidBundle, childIdentity, missingHome, invalidDataDirectory, invalidRedirectPort, entropyFailure }
+
+// Chromium children inherit stdout, but their stdin is /dev/null. Only the
+// validated main process receives this per-launch secret through its stdin.
+func commandHasValidAuthentication(_ command: [String: Any], token: String) -> Bool {
+    guard let supplied = command["token"] as? String else { return false }
+    let actual = Array(supplied.utf8)
+    let expected = Array(token.utf8)
+    guard actual.count == 64, expected.count == 64 else { return false }
+    var difference: UInt8 = 0
+    for index in expected.indices { difference |= actual[index] ^ expected[index] }
+    return difference == 0
+}
+
+private final class DesktopHost {
+    private let process = Process()
+    private let commands = Pipe()
+    private let events = Pipe()
+
+    static func childEnvironment() throws -> [String: String] {
+        guard let account = getpwuid(getuid()), let home = account.pointee.pw_dir else { throw DesktopHostError.missingHome }
+        var temporary = [CChar](repeating: 0, count: Int(PATH_MAX))
+        let length = confstr(_CS_DARWIN_USER_TEMP_DIR, &temporary, temporary.count)
+        guard length > 0, length <= temporary.count else { throw DesktopHostError.missingHome }
+        var environment = ["HOME": String(cString: home), "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+                           "TMPDIR": String(cString: temporary), "LANG": "en_US.UTF-8", "PASTE_PERFECT_NATIVE_HOST": "1"]
+        // These two documented application settings cannot load code. Keep test
+        // storage isolated, but reject shared directories and symlink aliases.
+        if let path = ProcessInfo.processInfo.environment["PASTE_PERFECT_DATA_DIR"] {
+            let components = path.split(separator: "/", omittingEmptySubsequences: false).dropFirst()
+            guard path.hasPrefix("/"), !components.isEmpty else { throw DesktopHostError.invalidDataDirectory }
+            var prefix = ""
+            var metadata = stat()
+            for component in components {
+                guard !component.isEmpty, component != ".", component != ".." else { throw DesktopHostError.invalidDataDirectory }
+                prefix += "/" + component
+                // Use lstat on every component: Foundation normalizes system
+                // aliases such as /private/tmp back to /tmp, a symlink.
+                guard lstat(prefix, &metadata) == 0, (metadata.st_mode & S_IFMT) == S_IFDIR else {
+                    throw DesktopHostError.invalidDataDirectory
+                }
+            }
+            guard metadata.st_uid == getuid(), (metadata.st_mode & 0o077) == 0 else { throw DesktopHostError.invalidDataDirectory }
+            environment["PASTE_PERFECT_DATA_DIR"] = path
+        }
+        if let port = ProcessInfo.processInfo.environment["PASTE_PERFECT_REDIRECT_PORT"] {
+            guard let number = UInt16(port), number > 0, String(number) == port else { throw DesktopHostError.invalidRedirectPort }
+            environment["PASTE_PERFECT_REDIRECT_PORT"] = port
+        }
+        return environment
+    }
+
+    static func validatedCode(at url: URL) throws -> SecStaticCode {
+        var code: SecStaticCode?
+        let flags = SecCSFlags(rawValue: kSecCSCheckAllArchitectures | kSecCSCheckNestedCode | kSecCSStrictValidate)
+        guard SecStaticCodeCreateWithPath(url as CFURL, [], &code) == errSecSuccess, let code,
+              SecStaticCodeCheckValidity(code, flags, nil) == errSecSuccess else { throw DesktopHostError.invalidBundle }
+        return code
+    }
+
+    static func exactRequirement(_ code: SecStaticCode) throws -> SecRequirement {
+        var information: CFDictionary?
+        guard SecCodeCopySigningInformation(code, [], &information) == errSecSuccess,
+              let hash = (information as? [String: Any])?[kSecCodeInfoUnique as String] as? Data else {
+            throw DesktopHostError.invalidBundle
+        }
+        let digest = hash.map { String(format: "%02x", $0) }.joined()
+        var requirement: SecRequirement?
+        guard SecRequirementCreateWithString("cdhash H\"\(digest)\"" as CFString, [], &requirement) == errSecSuccess,
+              let requirement else { throw DesktopHostError.invalidBundle }
+        return requirement
+    }
+
+    static func validateBundle() throws -> (URL, SecRequirement) {
+        let bundle = Bundle.main.bundleURL
+        guard bundle.pathExtension == "app", Bundle.main.bundleIdentifier == "com.openai.siwc.paste-perfect.native" else {
+            throw DesktopHostError.invalidBundle
+        }
+        let ownCode = try validatedCode(at: bundle)
+        let ownRequirement = try exactRequirement(ownCode)
+        var runningCode: SecCode?
+        guard SecCodeCopySelf([], &runningCode) == errSecSuccess, let runningCode,
+              SecCodeCheckValidity(runningCode, [], ownRequirement) == errSecSuccess else {
+            throw DesktopHostError.invalidBundle
+        }
+        let child = bundle.appendingPathComponent("Contents/Frameworks/Paste Perfect Desktop.app")
+        let code = try validatedCode(at: child)
+        return (child.appendingPathComponent("Contents/MacOS/Electron"), try exactRequirement(code))
+    }
+
+    func start(onCommand: @escaping ([String: Any]) -> Void, onClose: @escaping () -> Void) throws {
+        let (executable, requirement) = try Self.validateBundle()
+        var random = [UInt8](repeating: 0, count: 32)
+        guard SecRandomCopyBytes(kSecRandomDefault, random.count, &random) == errSecSuccess else {
+            throw DesktopHostError.entropyFailure
+        }
+        let commandToken = random.map { String(format: "%02x", $0) }.joined()
+        process.executableURL = executable
+        process.arguments = [] // Never forward the launcher's command line.
+        process.environment = try Self.childEnvironment()
+        process.currentDirectoryURL = Bundle.main.bundleURL
+        process.standardInput = events
+        process.standardOutput = commands
+        process.standardError = FileHandle.nullDevice
+        process.terminationHandler = { _ in DispatchQueue.main.async(execute: onClose) }
+        try process.run()
+        // Pin the running child to the code validated before launch, rather than
+        // treating a process name, identifier, or stock Electron signature as trust.
+        var childCode: SecCode?
+        guard SecCodeCopyGuestWithAttributes(nil, [kSecGuestAttributePid as String: process.processIdentifier] as CFDictionary,
+                                             [], &childCode) == errSecSuccess, let childCode,
+              SecCodeCheckValidity(childCode, [], requirement) == errSecSuccess else {
+            process.terminate()
+            throw DesktopHostError.childIdentity
+        }
+        desktopInput = events.fileHandleForWriting
+        emit(["type": "transport-auth", "token": commandToken])
+        DispatchQueue.global(qos: .utility).async { [self] in
+            var buffer = Data()
+            var desktopReady = false
+            readLoop: while true {
+                let bytes = commands.fileHandleForReading.availableData
+                if bytes.isEmpty { break }
+                buffer.append(bytes)
+                // Bound before splitting so an unterminated or oversized command
+                // cannot grow memory indefinitely.
+                if buffer.count > 1_200_000 { break }
+                while let newline = buffer.firstIndex(of: 10) {
+                    let data = buffer[..<newline]
+                    buffer.removeSubrange(...newline)
+                    guard var command = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+                          commandHasValidAuthentication(command, token: commandToken) else { break readLoop }
+                    command.removeValue(forKey: "token")
+                    if command["type"] as? String == "desktop-ready" {
+                        if !desktopReady {
+                            desktopReady = true
+                            FileHandle.standardError.write(Data("Paste Perfect desktop ready.\n".utf8))
+                        }
+                        continue
+                    }
+                    DispatchQueue.main.async { onCommand(command) }
+                }
+            }
+            DispatchQueue.main.async(execute: onClose)
+        }
+    }
+
+    func stop() {
+        desktopInput = nil
+        try? events.fileHandleForWriting.close()
+        if process.isRunning { process.terminate() }
+    }
+}
+
 #if !PASTE_PERFECT_NATIVE_TESTS
+guard #available(macOS 14.0, *) else { exit(1) }
+signal(SIGPIPE, SIG_IGN)
+if CommandLine.arguments.contains("--verify-bundle") {
+    do { _ = try DesktopHost.validateBundle(); exit(0) }
+    catch { FileHandle.standardError.write(Data("Paste Perfect bundle validation failed.\n".utf8)); exit(1) }
+}
 let application = NSApplication.shared
 private let controller = NativeController()
 application.delegate = controller
-DispatchQueue.global(qos: .utility).async {
-    while let line = readLine() {
-        guard line.utf8.count <= 1_200_000, let data = line.data(using: .utf8),
-              let command = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
-            DispatchQueue.main.async { emit(["type": "error", "message": "The native command could not be read."]) }
-            continue
-        }
-        DispatchQueue.main.async { controller.handle(command) }
-    }
-    DispatchQueue.main.async { controller.shutdown() }
+private let desktop = DesktopHost()
+closeDesktop = { desktop.stop() }
+do {
+    try desktop.start(onCommand: { controller.handle($0) }, onClose: { controller.shutdown() })
+} catch {
+    let reason = (error as? DesktopHostError).map { String(describing: $0) } ?? "launchFailed"
+    FileHandle.standardError.write(Data("Paste Perfect could not verify or start its sealed desktop app (\(reason)). Run npm run build and try again.\n".utf8))
+    exit(1)
+}
+private var shutdownSignals: [DispatchSourceSignal] = []
+for number in [SIGINT, SIGTERM] {
+    signal(number, SIG_IGN)
+    let source = DispatchSource.makeSignalSource(signal: number, queue: .main)
+    source.setEventHandler { controller.shutdown() }
+    source.resume()
+    shutdownSignals.append(source)
 }
 application.run()
+desktop.stop()
 #endif

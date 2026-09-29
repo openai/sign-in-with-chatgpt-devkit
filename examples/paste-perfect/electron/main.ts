@@ -51,10 +51,16 @@ let state: AppState = {
   native: NativePaste.initialState(),
   activity: [],
 };
-const native = new NativePaste(
-  resolve(directory, '../native/build/PastePerfectNative.app/Contents/MacOS/PastePerfectNative'),
-  receiveNativeEvent,
-);
+let rendererReady = false;
+let startupComplete = false;
+let readinessReported = false;
+const native = new NativePaste(receiveNativeEvent, () => app.quit(), reportReadiness);
+
+function reportReadiness(): void {
+  if (!readinessReported && rendererReady && startupComplete) {
+    readinessReported = native.send({ type: 'desktop-ready' });
+  }
+}
 
 function publish(): void {
   if (window && !window.isDestroyed() && !window.webContents.isLoadingMainFrame()) {
@@ -278,7 +284,11 @@ async function transformNative(input: NativeInvocation): Promise<void> {
 }
 
 function installIpc(): void {
-  handle('get-state', () => state);
+  handle('get-state', () => {
+    rendererReady = true;
+    reportReadiness();
+    return state;
+  });
   handle('arm-menu', armPasteMenu);
   handle('enable-native', () => {
     if (!native.send({ type: 'request-permission' })) throw new Error('Native paste is not available. Rebuild and restart the desktop app.');
@@ -349,7 +359,7 @@ async function createWindow(): Promise<void> {
     titleBarStyle: 'hiddenInset', trafficLightPosition: { x: 20, y: 20 },
     webPreferences: {
       preload: join(directory, 'preload.cjs'),
-      contextIsolation: true, sandbox: true, nodeIntegration: false,
+      contextIsolation: true, sandbox: true, nodeIntegration: false, devTools: false,
     },
   });
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
@@ -387,16 +397,13 @@ async function createTray(): Promise<void> {
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
-  if (process.env.PASTE_PERFECT_DEBUG) console.info('Paste Perfect: awaiting desktop readiness');
   app.on('second-instance', showDashboard);
   app.whenReady().then(async () => {
-    if (process.env.PASTE_PERFECT_DEBUG) console.info('Paste Perfect: desktop ready');
     await preferences.load();
     state.settings = preferences.settings;
     state.recipes = preferences.recipes;
     state.session = await chatgpt.getSession();
     await refreshProfiles();
-    if (process.env.PASTE_PERFECT_DEBUG) console.info('Paste Perfect: local state loaded');
     chatgpt.subscribe((session) => {
       if (session.profileId !== state.session.profileId || session.status !== 'connected' || !session.sharing) clearModelCatalog();
       state.session = session;
@@ -408,7 +415,6 @@ if (!app.requestSingleInstanceLock()) {
     native.start();
     configureNative();
     await createWindow();
-    if (process.env.PASTE_PERFECT_DEBUG) console.info('Paste Perfect: window loaded');
     await createTray();
     void refreshModels();
     if (!registerShortcut(preferences.settings.shortcut)) {
@@ -416,9 +422,13 @@ if (!app.requestSingleInstanceLock()) {
       publish();
     }
     app.on('activate', showDashboard);
+    startupComplete = true;
+    reportReadiness();
   }).catch((error: unknown) => {
-    dialog.showErrorBox('Paste Perfect could not start', error instanceof Error ? error.message : 'Please restart the app.');
-    app.quit();
+    const message = error instanceof Error ? error.message.slice(0, 1_000) : 'Please restart the app.';
+    process.stderr.write(`Paste Perfect could not start: ${message}\n`);
+    void dialog.showMessageBox({ type: 'error', title: 'Paste Perfect could not start', message })
+      .then(() => app.quit(), () => app.quit());
   });
 }
 

@@ -1,0 +1,25 @@
+# Native app packaging
+
+`npm run build` produces `build/PastePerfectNative.app`. `npm start` starts that app, which launches its bundled Electron dashboard. The normal shortcut, native menu, account and recipe flows remain the same. Stock `electron .` is no longer a way to connect to the native component. Browser-only dashboard development remains available with `npm run dev:web`.
+
+The native executable ignores its launcher's stdin and does not forward command-line arguments. It owns both anonymous pipes to the child that it starts. Starting a separate copy of Electron, setting `PASTE_PERFECT_NATIVE_HOST`, or writing an `arm` command to the native app's stdin cannot obtain a native command channel.
+
+The native app generates a random 256-bit command authenticator in memory for each launch. It sends that value only through its private event pipe to the validated Electron main process's stdin; every command must include it. Chromium helpers inherit stdout but receive `/dev/null` as stdin, so inheriting the command pipe does not authorize a helper to send commands. The main process keeps the value out of renderer state, environment variables, command-line arguments, URLs, files, and logs. No authenticator value or account credential is committed to this repository. Tests generate their own values at runtime and report only validation outcomes.
+
+The build includes the Electron runtime, the dashboard, the local SDK, and its JavaScript dependencies in one signed bundle. It verifies the complete resource seal, including nested code, before starting the dashboard. It also checks that the running native executable and the launched Electron process match the validated code hashes. Electron loads only the bundled `app.asar` and checks its integrity. Its Node environment options, RunAsNode mode, and inspector entry points (including SIGUSR1) are disabled. No development server, external module directory, or caller-selected script is used.
+
+The native executable uses hardened runtime without debugging, DYLD, or library-validation exceptions. The packaged Electron processes use the JIT entitlement. Their Team-ID library check is replaced with a kernel-enforced constraint listing the exact bundled library code hashes; system libraries remain allowed by macOS. This supports ad-hoc development without allowing arbitrary third-party libraries. Every executable with this exception carries the constraint, while standalone system-library-only tools keep default library validation. These constraints require macOS 14 or later; older macOS versions fail closed. Environment variables passed to Electron are explicitly selected; HOME and the temporary directory come from macOS, not the launcher. The native app closes the session when the child exits or its command pipe closes. Electron exits when its native parent closes the event pipe.
+
+Local builds are ad-hoc signed. Their default signing requirements bind their identity to the built code and resource seal. Do not replace these requirements with an identifier-only requirement. A changed build may require granting Accessibility again; an unchanged, verified build is reused. Previously built versions should be retired, including their old Accessibility grants. The example has no automatic-update integration and omits the unused Squirrel ShipIt installer tool. Publishing a distributable app still requires reviewing its signing identity, update behaviour, notarization, and macOS TCC behaviour.
+
+For an isolated startup check, set `PASTE_PERFECT_DATA_DIR` to an existing absolute directory owned by the current user, with no group/other access and no symlink path components. `PASTE_PERFECT_REDIRECT_PORT` accepts an integer from 1 to 65535. These are the only caller-selected application settings forwarded to the dashboard. They cannot select code or enable debugging. Production and test code do not request Accessibility until the user selects Enable native paste.
+
+The default native regression suite compiles and tests configuration handling without starting the app or an event tap. After building, run the opt-in package checks:
+
+```sh
+PASTE_PERFECT_BUNDLE_TESTS=1 node --test examples/paste-perfect/test/native-bundle.test.mjs
+```
+
+These checks use synthetic data and temporary copies of the built bundle. Startup succeeds only after the renderer calls its authenticated state bridge and the dashboard and tray finish loading; a fixed readiness diagnostic contains no user data or authenticator. The checks need access to the macOS GUI session and process list. They do not grant Accessibility or initiate OAuth. They do not establish that native paste works in every destination or how TCC attributes a distributed signing identity.
+
+Implementation references: [Electron fuses](https://www.electronjs.org/docs/latest/tutorial/fuses), [ASAR integrity](https://www.electronjs.org/docs/latest/tutorial/asar-integrity), and [Apple code-signature validation](https://developer.apple.com/documentation/security/secstaticcodecheckvalidity(_:_:_:)).
