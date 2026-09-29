@@ -78,15 +78,9 @@ main { max-width: 1250px; margin: 0 auto; padding: 43px 44px 90px; outline: none
 .gallery-button:hover { background: #35482f; }
 .gallery-button--quiet { border-color: #d3d9ca; color: #64725b; background: #fcfcfa; }
 .gallery-button--quiet:hover, .gallery-button--quiet[aria-pressed=true] { background: #eaf0e1; border-color: #c1ceb1; color: #3c5332; }
-.dialog-launcher { display: flex; flex-direction: column; align-items: center; gap: 15px; max-width: 320px; text-align: center; }
-.dialog-launcher p { margin: 0; color: #969b8f; font-size: 11px; line-height: 1.7; }
 .case-controls { display: flex; flex-wrap: wrap; gap: 20px; align-items: end; padding: 19px 20px; background: #f2f4ed; border: 1px solid #e0e5d8; border-radius: 8px; }
 .case-controls select { min-width: 144px; }
 .case-controls select:disabled { color: #b0b6a6; background: #f6f7f2; }
-.scenario-index { padding: 5px 1px; }
-.scenario-index h3 { font-size: 11px; font-weight: 500; margin: 0 0 12px; }
-.scenario-index > div { display: flex; flex-wrap: wrap; gap: 8px; }
-.scenario-index p { max-width: 650px; margin: 13px 0 0; color: #969b8f; font-size: 11px; line-height: 1.8; }
 .references { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px; margin-top: 8px; }
 .reference { margin: 0; overflow: hidden; border: 1px dashed #c6cdbe; border-radius: 8px; background: #fff; }
 .reference figcaption { display: flex; flex-direction: column; gap: 5px; padding: 17px 18px; border-bottom: 1px dashed #dbe0d2; }

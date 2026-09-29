@@ -58,7 +58,7 @@ Import `@siwc/react/styles.css` once in your app to load the components' default
 npm run dev:gallery
 ```
 
-Open the local URL printed by Vite to explore sign-in buttons, connection cards, usage controls, and recovery states. The gallery uses simulated state and makes no authentication or API requests. It labels Figma reference designs separately from added interaction and recovery states.
+Open the local URL printed by Vite to explore sign-in buttons, connection cards, plan usage indicators, and usage controls. The gallery uses simulated state and makes no authentication or API requests. It labels Figma reference designs separately from added interaction states.
 
 Optional comparison images can be placed in `examples/component-gallery/public/references/`. This directory is ignored by Git and excluded from production builds.
 
