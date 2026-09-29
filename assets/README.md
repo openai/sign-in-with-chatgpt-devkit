@@ -6,7 +6,7 @@ The React components, component gallery, and repository README use the assets in
 | --- | --- | --- |
 | `brand/` | Six ChatGPT SVG variants for buttons, connection cards, callouts, dialogs, and usage UI. | Follow the [OpenAI brand guidelines](https://openai.com/brand/). |
 | `icons/` | Three external-link SVG variants. | These were exported with the component designs. |
-| `readme/` | Black and white Sign in with ChatGPT SVG buttons for the README header. | Follow the [OpenAI brand guidelines](https://openai.com/brand/). |
+| `readme/` | Black and white Sign in with ChatGPT SVG buttons, a composer design example, and a screenshot of the local component preview. | Follow the [OpenAI brand guidelines](https://openai.com/brand/). |
 | `fonts/` | Inter and Open Sans WOFF2 fonts and their SIL Open Font License files. | Preserve the corresponding OFL files when distributing the fonts. |
 
 ## Font provenance

@@ -5,27 +5,31 @@
 
 # Sign in with ChatGPT DevKit
 
-Add Sign in with ChatGPT to apps that run on a user's local machine. The DevKit includes a Node.js SDK, React components, and Paste Perfect, a macOS example app that transforms copied text and pastes the result into another app.
+[Sign in with ChatGPT](https://learn.chatgpt.com/docs/sign-in-with-chatgpt) lets users sign in to your app with their ChatGPT account. With their permission, eligible users can also use their ChatGPT plan to power your app's AI features without setting up an API key.
 
-Users can sign in with their ChatGPT account and, when eligible and with their permission, use their ChatGPT plan to power your app's AI features.
+This DevKit is for developers building open-source apps that run on a user's own machine. It gives you a local Node.js SDK, React components, and design assets to integrate Sign in with ChatGPT, plus Paste Perfect, a working macOS example app you can learn from.
 
-## Resources
+![Example composer menu with a ChatGPT plan indicator and Manage usage control](assets/readme/composer-plan-usage.jpg)
 
-- **[Developer documentation](https://developers.openai.com/siwc)** — Integration options, availability, authentication, ChatGPT plan usage, and UI guidelines.
-- **[Paste Perfect cookbook](https://developers.openai.com/cookbook/articles/sign-in-with-chatgpt)** — A walkthrough of adding Sign in with ChatGPT to a local app using this DevKit.
-- **[Sign in with ChatGPT for users](https://learn.chatgpt.com/docs/sign-in-with-chatgpt)** — How sign-in and ChatGPT plan usage work, including user controls.
+*Example placement of ChatGPT plan usage controls in your app's composer menu.*
+
+## Use the DevKit in your app
+
+Follow the [Paste Perfect cookbook](https://developers.openai.com/cookbook/articles/sign-in-with-chatgpt) for a step-by-step integration. See the [developer documentation](https://developers.openai.com/siwc) for authentication and ChatGPT plan usage.
+
+Use `@siwc/local` in your app's local Node.js process for sign-in and API requests, and `@siwc/react` for the UI. Import `@siwc/react/styles.css` once. Both packages are local workspaces in this repository; [Paste Perfect](examples/paste-perfect) shows how to connect them, including [OS-encrypted credential storage](docs/security.md).
 
 ## What's included
 
 | Folder | Contents |
 | --- | --- |
 | [`packages/local`](packages/local) | OAuth, credential storage, account profiles, model discovery, and streaming Responses. |
-| [`packages/react`](packages/react) | Sign-in button, connection status, usage links, and recovery UI. |
-| [`assets`](assets) | Figma-exported ChatGPT marks and icons, plus locally bundled fonts. |
-| [`examples/component-gallery`](examples/component-gallery) | Interactive previews of component variants and connection states. |
-| [`examples/paste-perfect`](examples/paste-perfect) | A native macOS paste menu with an Electron settings dashboard. |
+| [`packages/react`](packages/react) | React components for sign-in, connection status, and ChatGPT plan usage. |
+| [`assets`](assets) | ChatGPT marks, icons, sign-in buttons, and fonts. |
+| [`examples/component-gallery`](examples/component-gallery) | Design examples for sign-in, account connections, and ChatGPT plan usage controls. |
+| [`examples/paste-perfect`](examples/paste-perfect) | An example native macOS app that uses Sign in with ChatGPT to transform copied text and paste the result into another app, with an Electron settings dashboard. |
 
-## Run Paste Perfect
+## Running the example Paste Perfect app with Sign in with ChatGPT
 
 Requires macOS 14 or later, Node.js 22.12 or later, and Xcode Command Line Tools.
 
@@ -44,43 +48,24 @@ npm start
 
 The result is pasted into the destination app. Use the Electron dashboard to manage accounts, settings, recipes, and activity. Paste Perfect currently supports text on macOS; compatibility varies by destination app.
 
-## Use the DevKit in your app
+## Branding and Design Guidelines
 
-Start with the [cookbook](https://developers.openai.com/cookbook/articles/sign-in-with-chatgpt) and [Paste Perfect's implementation](examples/paste-perfect) to connect the SDK and components to your app. The packages are included as local workspaces in this repository.
+Use the [UI/UX guidelines](https://developers.openai.com/siwc/ui-ux-guidelines) and [design assets](assets/README.md) to add a familiar sign-in experience, show which ChatGPT account is connected, and make plan usage controls easy to find. Try the components with your app's name and layout to choose button styles, check connection states, and place usage indicators where users need them.
 
-Run `@siwc/local` in your local Node process and supply an OS-backed credential encryption provider. Paste Perfect uses [Electron `safeStorage`](examples/paste-perfect/electron/credential-encryption.ts); on macOS, its encryption key is protected by Keychain. Storage fails closed if OS encryption is unavailable. The React components receive connection state and callbacks, never tokens. See [credential storage and application boundaries](docs/security.md) for migration behaviour and limitations.
+![Sign-in button designs in the local DevKit preview](assets/readme/branding-and-design-guidelines.jpg)
 
-Import `@siwc/react/styles.css` once in your app to load the components' default styles and visual assets. Use `@siwc/react/tokens.css` for the component tokens separately. See the [UI/UX guidelines](https://developers.openai.com/siwc/ui-ux-guidelines) for sign-in and usage controls, and [design assets](assets/README.md) for asset usage and attribution.
-
-## Component gallery
+To try the designs locally after installing dependencies:
 
 ```sh
 npm run dev:gallery
 ```
 
-Open the local URL printed by Vite to explore sign-in buttons, connection cards, plan usage indicators, and usage controls. The gallery uses simulated state and makes no authentication or API requests. It labels Figma reference designs separately from added interaction states.
-
-Optional comparison images can be placed in `examples/component-gallery/public/references/`. This directory is ignored by Git and excluded from production builds.
-
-## Development
-
-```sh
-npm run typecheck
-npm test
-npm run licenses:check
-npm run build
-```
-
-Use `npm run dev:web` to preview the React dashboard in a browser. Native clipboard actions require the desktop app.
-
-For an opt-in credential-storage test using real Electron OS encryption and synthetic data, see [runtime verification](docs/security.md#verification).
-
-After changing dependencies or bundled font files, run `npm ci` and `npm run licenses:generate`, then review the updated notices and inventory.
-
-External pull requests are not accepted; see [contribution policy](CONTRIBUTING.md).
+Open the local URL printed in your terminal.
 
 ## Licence
 
 OpenAI-authored code and documentation are licensed under the [Sign-in with ChatGPT DevKit Noncommercial License v1.0](LICENSE). Third-party fonts and dependencies retain their own licences; see [third-party notices](THIRD_PARTY_NOTICES.md) and the [dependency inventory](docs/dependency-inventory.json). OpenAI trademarks remain subject to the [OpenAI brand guidelines](https://openai.com/brand/).
 
 Bundled Inter and Open Sans fonts include their licence files. SF Pro uses the system font on Apple platforms and falls back on other platforms.
+
+For contribution policy, see [CONTRIBUTING.md](CONTRIBUTING.md).
