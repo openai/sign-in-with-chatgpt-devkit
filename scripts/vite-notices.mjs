@@ -14,14 +14,7 @@ export function includeThirdPartyNotices() {
         'assets/fonts/inter-OFL.txt',
         'assets/fonts/open-sans-OFL.txt',
       ]) {
-        let source;
-        try {
-          source = readFileSync(new URL(`../${fileName}`, import.meta.url), 'utf8');
-        } catch (error) {
-          // A first-party licence is pending; third-party notices remain required.
-          if (fileName === 'LICENSE' && error.code === 'ENOENT') continue;
-          throw error;
-        }
+        const source = readFileSync(new URL(`../${fileName}`, import.meta.url), 'utf8');
         this.emitFile({
           type: 'asset',
           fileName,
