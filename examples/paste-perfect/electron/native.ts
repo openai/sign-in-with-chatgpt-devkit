@@ -1,4 +1,3 @@
-import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import type { NativeIntegrationState, Recipe } from '../shared.js';
 
 export interface NativeInvocation {
@@ -36,13 +35,16 @@ function isEvent(value: unknown): value is NativeEvent {
   }
 }
 
-/** Private transport: credentials never enter the helper; clipboard content never enters the renderer. */
+/** Pipes are created by the sealed native parent, never by an arbitrary launcher. */
 export class NativePaste {
-  private child: ChildProcessWithoutNullStreams | undefined;
+  private started = false;
   private buffer = '';
   private stopping = false;
+  private commandToken?: string;
+  private pendingConfiguration?: Record<string, unknown>;
 
-  constructor(private readonly executable: string, private readonly onEvent: (event: NativeEvent) => void) {}
+  constructor(private readonly onEvent: (event: NativeEvent) => void, private readonly onDisconnect: () => void,
+    private readonly onAuthenticated: () => void = () => {}) {}
 
   static initialState(): NativeIntegrationState {
     return {
@@ -52,49 +54,72 @@ export class NativePaste {
   }
 
   start(): void {
-    if (process.platform !== 'darwin' || this.child) return;
+    if (process.platform !== 'darwin' || this.started) return;
+    if (process.env.PASTE_PERFECT_NATIVE_HOST !== '1') {
+      this.fail('Open the built Paste Perfect app using npm start.');
+      return;
+    }
+    // The marker only selects a transport. Forging it cannot connect to a
+    // running native app: only the parent has the other ends of these pipes.
     this.stopping = false;
-    const child = spawn(this.executable, [], { stdio: 'pipe' });
-    this.child = child;
-    child.stdout.setEncoding('utf8');
-    child.stdout.on('data', (chunk: string) => {
+    this.started = true;
+    process.stdin.setEncoding('utf8');
+    process.stdin.on('data', (chunk: string) => {
       this.buffer += chunk;
-      if (this.buffer.length > 1_000_000) { this.fail('The native helper returned an invalid response.'); this.stop(); return; }
+      if (this.buffer.length > 1_000_000) { this.disconnect(); return; }
       let newline: number;
       while ((newline = this.buffer.indexOf('\n')) !== -1) {
         const line = this.buffer.slice(0, newline);
         this.buffer = this.buffer.slice(newline + 1);
         try {
           const event: unknown = JSON.parse(line);
+          if (event && typeof event === 'object' && (event as Record<string, unknown>).type === 'transport-auth') {
+            const token = (event as Record<string, unknown>).token;
+            if (this.commandToken || typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token)) { this.disconnect(); return; }
+            this.commandToken = token;
+            if (this.pendingConfiguration) {
+              this.send(this.pendingConfiguration);
+              this.pendingConfiguration = undefined;
+            }
+            this.onAuthenticated();
+            continue;
+          }
+          if (!this.commandToken) { this.disconnect(); return; }
           if (isEvent(event)) this.onEvent(event);
-        } catch { /* Ignore non-protocol output without exposing clipboard content. */ }
+        } catch { this.disconnect(); return; }
       }
     });
-    // Drain diagnostics without putting native state or clipboard data in logs.
-    child.stderr.resume();
-    child.stdin.on('error', () => this.fail('The native paste helper disconnected. Restart Paste Perfect.'));
-    child.on('error', () => this.fail('The native paste helper could not start. Run npm run build and reopen Paste Perfect.'));
-    child.on('exit', () => {
-      if (this.child === child) this.child = undefined;
-      if (!this.stopping) this.fail('The native paste helper stopped. Restart Paste Perfect.');
-    });
+    process.stdin.on('end', () => this.disconnect());
+    process.stdin.on('error', () => this.disconnect());
+    process.stdout.on('error', () => this.disconnect());
   }
 
   configure(recipes: Recipe[], connected: boolean): void {
-    if (this.child) this.send({ type: 'configure', recipes: recipes.map(({ id, name }) => ({ id, name })), connected });
+    if (!this.started) return;
+    const command = { type: 'configure', recipes: recipes.map(({ id, name }) => ({ id, name })), connected };
+    if (this.commandToken) this.send(command);
+    else this.pendingConfiguration = command;
   }
 
   send(command: Record<string, unknown>): boolean {
-    if (!this.child?.stdin.writable) { this.fail('Native paste is not available. Check its setup in the dashboard.'); return false; }
-    try { this.child.stdin.write(`${JSON.stringify(command)}\n`); return true; }
-    catch { this.fail('The native paste helper disconnected. Restart Paste Perfect.'); return false; }
+    if (!this.started || !this.commandToken || !process.stdout.writable) { this.fail('Native paste is not available. Check its setup in the dashboard.'); return false; }
+    try { process.stdout.write(`${JSON.stringify({ ...command, token: this.commandToken })}\n`); return true; }
+    catch { this.disconnect(); return false; }
   }
 
   stop(): void {
     this.stopping = true;
-    const child = this.child;
-    this.child = undefined;
-    if (child) { child.stdin.end(); child.kill(); }
+    this.started = false;
+    this.commandToken = undefined;
+    this.pendingConfiguration = undefined;
+    process.stdin.pause();
+  }
+
+  private disconnect(): void {
+    if (this.stopping) return;
+    this.fail('The native app disconnected. Restart Paste Perfect.');
+    this.stop();
+    this.onDisconnect();
   }
 
   private fail(message: string): void {

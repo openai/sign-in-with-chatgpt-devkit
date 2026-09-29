@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "source": "package-lock.json",
   "lockfileVersion": 3,
-  "lockfileSha256": "11b54aaecc4b928307f25661234b4e810b9d54bc2b0bd0da92b4bcbe9631bc4b",
+  "lockfileSha256": "adf9305f9965b00a3ec5c1398410fbcc461b7b6b259419515ceaffd40fb2cd0d",
   "scope": "All lockfile entries, including workspaces and platform-specific optional dependencies. Declared licences are upstream metadata, not legal clearance. Full notice text is included for runtime dependencies, Vite, the Electron npm package, and bundled fonts.",
   "electronBinaryScope": "The Electron npm package MIT licence does not cover all code in an Electron/Chromium binary. Before distributing a packaged desktop application, preserve the licences shipped in that exact Electron distribution, including LICENSE and LICENSES.chromium.html, and review any additional bundled components.",
   "packages": [
@@ -74,6 +74,44 @@
       "declaredLicense": "BSD-2-Clause",
       "resolved": "https://registry.npmjs.org/@electron-internal/extract-zip/-/extract-zip-1.0.5.tgz",
       "integrity": "sha512-+bqFCP98pLI0Tt0XQo1TmlXtwjWchISndDOxCkEcIuUgXWpBnLyRI+2DU+mesvnMMX6L1XDqYNA0lXNDHd/yiA==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/@electron/asar",
+      "name": "@electron/asar",
+      "version": "4.0.1",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/@electron/asar/-/asar-4.0.1.tgz",
+      "integrity": "sha512-F4Ykm1jiBGY1WV/o8Q8oFW8Nq0u+S2/vPujzNJtdSJ6C4LHC4CiGLn7c17s7SolZ23gcvCebMncmZtNc+MkxPQ==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "commander": "^13.1.0",
+        "glob": "^11.0.1",
+        "minimatch": "^10.0.1"
+      },
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/@electron/fuses",
+      "name": "@electron/fuses",
+      "version": "2.1.2",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/@electron/fuses/-/fuses-2.1.2.tgz",
+      "integrity": "sha512-x083OSf4xO9CKUKmJFYW+Egua9y/v2XOCcCIuWnM4RlpMj8xHwKICezlVN6vZyI2cZTr/ysZXRU5AKtYPJivBQ==",
       "workspaceLink": false,
       "developmentOnly": true,
       "optional": false,
@@ -651,6 +689,23 @@
       "cpu": [
         "x64"
       ],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/@isaacs/cliui",
+      "name": "@isaacs/cliui",
+      "version": "9.0.0",
+      "declaredLicense": "BlueOak-1.0.0",
+      "resolved": "https://registry.npmjs.org/@isaacs/cliui/-/cliui-9.0.0.tgz",
+      "integrity": "sha512-AokJm4tuBHillT+FpMtxQ60n8ObyXBatq7jD2/JA9dxbDDokKQm8KMht5ibGzLVU9IJDIKK4TPKgMHEYMn3lMg==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
       "dependencies": {},
       "optionalDependencies": {},
       "peerDependencies": {},
@@ -1611,6 +1666,80 @@
       "includedNoticeFiles": []
     },
     {
+      "path": "node_modules/balanced-match",
+      "name": "balanced-match",
+      "version": "4.0.4",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-4.0.4.tgz",
+      "integrity": "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/brace-expansion",
+      "name": "brace-expansion",
+      "version": "5.0.12",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
+      "integrity": "sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "balanced-match": "^4.0.2"
+      },
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/commander",
+      "name": "commander",
+      "version": "13.1.0",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/commander/-/commander-13.1.0.tgz",
+      "integrity": "sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/cross-spawn",
+      "name": "cross-spawn",
+      "version": "7.0.6",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz",
+      "integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "path-key": "^3.1.0",
+        "shebang-command": "^2.0.0",
+        "which": "^2.0.1"
+      },
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
       "path": "node_modules/csstype",
       "name": "csstype",
       "version": "3.2.3",
@@ -1770,6 +1899,43 @@
       "includedNoticeFiles": []
     },
     {
+      "path": "node_modules/foreground-child",
+      "name": "foreground-child",
+      "version": "3.3.1",
+      "declaredLicense": "ISC",
+      "resolved": "https://registry.npmjs.org/foreground-child/-/foreground-child-3.3.1.tgz",
+      "integrity": "sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "cross-spawn": "^7.0.6",
+        "signal-exit": "^4.0.1"
+      },
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/foreground-child/node_modules/signal-exit",
+      "name": "signal-exit",
+      "version": "4.1.0",
+      "declaredLicense": "ISC",
+      "resolved": "https://registry.npmjs.org/signal-exit/-/signal-exit-4.1.0.tgz",
+      "integrity": "sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
       "path": "node_modules/fsevents",
       "name": "fsevents",
       "version": "2.3.3",
@@ -1784,6 +1950,30 @@
       ],
       "cpu": [],
       "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/glob",
+      "name": "glob",
+      "version": "11.1.0",
+      "declaredLicense": "BlueOak-1.0.0",
+      "resolved": "https://registry.npmjs.org/glob/-/glob-11.1.0.tgz",
+      "integrity": "sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "foreground-child": "^3.3.1",
+        "jackspeak": "^4.1.1",
+        "minimatch": "^10.1.1",
+        "minipass": "^7.1.2",
+        "package-json-from-dist": "^1.0.0",
+        "path-scurry": "^2.0.0"
+      },
       "optionalDependencies": {},
       "peerDependencies": {},
       "includedNoticeFiles": []
@@ -1809,6 +1999,42 @@
           "sha256": "f65c5d9f22a317b2a10803bd1868461ce6499c2ed7217bc80c0cc772a748789c"
         }
       ]
+    },
+    {
+      "path": "node_modules/isexe",
+      "name": "isexe",
+      "version": "2.0.0",
+      "declaredLicense": "ISC",
+      "resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz",
+      "integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/jackspeak",
+      "name": "jackspeak",
+      "version": "4.2.3",
+      "declaredLicense": "BlueOak-1.0.0",
+      "resolved": "https://registry.npmjs.org/jackspeak/-/jackspeak-4.2.3.tgz",
+      "integrity": "sha512-ykkVRwrYvFm1nb2AJfKKYPr0emF6IiXDYUaFx4Zn9ZuIH7MrzEZ3sD5RlqGXNRpHtvUHJyOnCEFxOlNDtGo7wg==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "@isaacs/cliui": "^9.0.0"
+      },
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
     },
     {
       "path": "node_modules/jose",
@@ -2095,6 +2321,23 @@
       "includedNoticeFiles": []
     },
     {
+      "path": "node_modules/lru-cache",
+      "name": "lru-cache",
+      "version": "11.5.3",
+      "declaredLicense": "BlueOak-1.0.0",
+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz",
+      "integrity": "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
       "path": "node_modules/lucide-react",
       "name": "lucide-react",
       "version": "0.577.0",
@@ -2117,6 +2360,42 @@
           "sha256": "668dcc52803480e0a026b31140a4cae668772663cd764e5991d252eef03f98db"
         }
       ]
+    },
+    {
+      "path": "node_modules/minimatch",
+      "name": "minimatch",
+      "version": "10.2.6",
+      "declaredLicense": "BlueOak-1.0.0",
+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
+      "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "brace-expansion": "^5.0.8"
+      },
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/minipass",
+      "name": "minipass",
+      "version": "7.1.3",
+      "declaredLicense": "BlueOak-1.0.0",
+      "resolved": "https://registry.npmjs.org/minipass/-/minipass-7.1.3.tgz",
+      "integrity": "sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
     },
     {
       "path": "node_modules/ms",
@@ -2148,6 +2427,60 @@
       "os": [],
       "cpu": [],
       "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/package-json-from-dist",
+      "name": "package-json-from-dist",
+      "version": "1.0.1",
+      "declaredLicense": "BlueOak-1.0.0",
+      "resolved": "https://registry.npmjs.org/package-json-from-dist/-/package-json-from-dist-1.0.1.tgz",
+      "integrity": "sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/path-key",
+      "name": "path-key",
+      "version": "3.1.1",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz",
+      "integrity": "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/path-scurry",
+      "name": "path-scurry",
+      "version": "2.0.2",
+      "declaredLicense": "BlueOak-1.0.0",
+      "resolved": "https://registry.npmjs.org/path-scurry/-/path-scurry-2.0.2.tgz",
+      "integrity": "sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "lru-cache": "^11.0.0",
+        "minipass": "^7.1.2"
+      },
       "optionalDependencies": {},
       "peerDependencies": {},
       "includedNoticeFiles": []
@@ -2396,6 +2729,42 @@
       "includedNoticeFiles": []
     },
     {
+      "path": "node_modules/shebang-command",
+      "name": "shebang-command",
+      "version": "2.0.0",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz",
+      "integrity": "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "shebang-regex": "^3.0.0"
+      },
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
+      "path": "node_modules/shebang-regex",
+      "name": "shebang-regex",
+      "version": "3.0.0",
+      "declaredLicense": "MIT",
+      "resolved": "https://registry.npmjs.org/shebang-regex/-/shebang-regex-3.0.0.tgz",
+      "integrity": "sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {},
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
+    },
+    {
       "path": "node_modules/signal-exit",
       "name": "signal-exit",
       "version": "3.0.7",
@@ -2587,6 +2956,25 @@
           "sha256": "387dd7baa307083401a27c58c362c30832f5ba1dba84f10cc22c33401523f45c"
         }
       ]
+    },
+    {
+      "path": "node_modules/which",
+      "name": "which",
+      "version": "2.0.2",
+      "declaredLicense": "ISC",
+      "resolved": "https://registry.npmjs.org/which/-/which-2.0.2.tgz",
+      "integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
+      "workspaceLink": false,
+      "developmentOnly": true,
+      "optional": false,
+      "os": [],
+      "cpu": [],
+      "dependencies": {
+        "isexe": "^2.0.0"
+      },
+      "optionalDependencies": {},
+      "peerDependencies": {},
+      "includedNoticeFiles": []
     },
     {
       "path": "packages/local",

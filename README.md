@@ -12,7 +12,7 @@ Add Sign in with ChatGPT to apps that run on a user's local machine. Includes a 
 
 ## Run Paste Perfect
 
-Requires macOS 13 or later, Node.js 22.12 or later, and Xcode Command Line Tools.
+Requires macOS 14 or later, Node.js 22.12 or later, and Xcode Command Line Tools.
 
 ```sh
 npm ci
