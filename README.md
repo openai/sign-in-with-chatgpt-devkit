@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/sign-in-with-chatgpt-white.svg">
+  <img src="assets/readme/sign-in-with-chatgpt-black.svg" alt="Sign in with ChatGPT" width="363">
+</picture>
+
 # Sign in with ChatGPT DevKit
 
 Add Sign in with ChatGPT to apps that run on a user's local machine. The DevKit includes a Node.js SDK, React components, and Paste Perfect, a macOS example app that transforms copied text and pastes the result into another app.
@@ -9,7 +14,6 @@ Users can sign in with their ChatGPT account and, when eligible and with their p
 - **[Developer documentation](https://developers.openai.com/siwc)** — Integration options, availability, authentication, ChatGPT plan usage, and UI guidelines.
 - **[Paste Perfect cookbook](https://developers.openai.com/cookbook/articles/sign-in-with-chatgpt)** — A walkthrough of adding Sign in with ChatGPT to a local app using this DevKit.
 - **[Sign in with ChatGPT for users](https://learn.chatgpt.com/docs/sign-in-with-chatgpt)** — How sign-in and ChatGPT plan usage work, including user controls.
-- **[Interest form](https://openai.com/form/sign-in-with-chatgpt-interest/)** — Tell us what you're building and request access.
 
 ## What's included
 
