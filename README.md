@@ -1,6 +1,17 @@
-# Sign-in with ChatGPT DevKit
+# Sign in with ChatGPT DevKit
 
-Add Sign in with ChatGPT to apps that run on a user's local machine. Includes a Node.js SDK, React components, and a desktop example.
+Add Sign in with ChatGPT to apps that run on a user's local machine. The DevKit includes a Node.js SDK, React components, and Paste Perfect, a macOS example app that transforms copied text and pastes the result into another app.
+
+Users can sign in with their ChatGPT account and, when eligible and with their permission, use their ChatGPT plan to power your app's AI features.
+
+## Resources
+
+- **[Developer documentation](https://developers.openai.com/siwc)** — Integration options, availability, authentication, ChatGPT plan usage, and UI guidelines.
+- **[Paste Perfect cookbook](https://developers.openai.com/cookbook/articles/sign-in-with-chatgpt)** — A walkthrough of adding Sign in with ChatGPT to a local app using this DevKit.
+- **[Sign in with ChatGPT for users](https://learn.chatgpt.com/docs/sign-in-with-chatgpt)** — How sign-in and ChatGPT plan usage work, including user controls.
+- **[Interest form](https://openai.com/form/sign-in-with-chatgpt-interest/)** — Tell us what you're building and request access.
+
+## What's included
 
 | Folder | Contents |
 | --- | --- |
@@ -15,18 +26,27 @@ Add Sign in with ChatGPT to apps that run on a user's local machine. Includes a 
 Requires macOS 14 or later, Node.js 22.12 or later, and Xcode Command Line Tools.
 
 ```sh
+git clone https://github.com/openai/sign-in-with-chatgpt-devkit.git
+cd sign-in-with-chatgpt-devkit
 npm ci
 npm run build
 npm start
 ```
 
-Sign in with ChatGPT from the dashboard and grant Accessibility access to the native helper. Copy text, focus an editable field in another app, press **⌘⇧Space**, then right-click within eight seconds. Choose Spreadsheet, Message, Translate, Checklist, Clean up, or a saved recipe.
+1. Sign in with ChatGPT from the dashboard.
+2. Enable native paste and grant Accessibility access to the native helper.
+3. Copy text, focus an editable field in another app, press **⌘⇧Space**, then right-click within eight seconds.
+4. Choose Spreadsheet, Message, Translate, Checklist, Clean up, or a saved recipe.
 
-Paste Perfect transforms the copied text and pastes the result into the destination app. The Electron dashboard manages accounts, settings, recipes, and activity. The example currently supports text on macOS; compatibility varies by destination app.
+The result is pasted into the destination app. Use the Electron dashboard to manage accounts, settings, recipes, and activity. Paste Perfect currently supports text on macOS; compatibility varies by destination app.
 
-OAuth credentials stay in the local Node process. Paste Perfect encrypts the saved connection state using Electron `safeStorage`; on macOS, its encryption key is protected by Keychain. Storage fails closed if OS encryption is unavailable. The React components receive connection state and callbacks, never tokens. See [credential storage and application boundaries](docs/security.md) for migration behaviour and limitations.
+## Use the DevKit in your app
 
-React components include their default visual assets. Import `@siwc/react/styles.css` once in your app; `@siwc/react/tokens.css` exposes the component tokens separately. See [design assets](assets/README.md) for usage and attribution. OpenAI marks are subject to the [OpenAI brand guidelines](https://openai.com/brand/). Bundled Inter and Open Sans fonts include their licence files; SF Pro uses the system font on Apple platforms and falls back on other platforms.
+Start with the [cookbook](https://developers.openai.com/cookbook/articles/sign-in-with-chatgpt) and [Paste Perfect's implementation](examples/paste-perfect) to connect the SDK and components to your app. The packages are included as local workspaces in this repository.
+
+Run `@siwc/local` in your local Node process and supply an OS-backed credential encryption provider. Paste Perfect uses [Electron `safeStorage`](examples/paste-perfect/electron/credential-encryption.ts); on macOS, its encryption key is protected by Keychain. Storage fails closed if OS encryption is unavailable. The React components receive connection state and callbacks, never tokens. See [credential storage and application boundaries](docs/security.md) for migration behaviour and limitations.
+
+Import `@siwc/react/styles.css` once in your app to load the components' default styles and visual assets. Use `@siwc/react/tokens.css` for the component tokens separately. See the [UI/UX guidelines](https://developers.openai.com/siwc/ui-ux-guidelines) for sign-in and usage controls, and [design assets](assets/README.md) for asset usage and attribution.
 
 ## Component gallery
 
@@ -34,7 +54,7 @@ React components include their default visual assets. Import `@siwc/react/styles
 npm run dev:gallery
 ```
 
-Open the local URL printed by Vite to inspect buttons, connection cards, usage indicators, usage actions, and recovery cards and dialogs. The gallery uses simulated state and makes no authentication or API requests. It labels Figma reference designs separately from added interaction and recovery states.
+Open the local URL printed by Vite to explore sign-in buttons, connection cards, usage controls, and recovery states. The gallery uses simulated state and makes no authentication or API requests. It labels Figma reference designs separately from added interaction and recovery states.
 
 Optional comparison images can be placed in `examples/component-gallery/public/references/`. This directory is ignored by Git and excluded from production builds.
 
@@ -58,3 +78,5 @@ External pull requests are not accepted; see [contribution policy](CONTRIBUTING.
 ## Licence
 
 OpenAI-authored code and documentation are licensed under the [Sign-in with ChatGPT DevKit Noncommercial License v1.0](LICENSE). Third-party fonts and dependencies retain their own licences; see [third-party notices](THIRD_PARTY_NOTICES.md) and the [dependency inventory](docs/dependency-inventory.json). OpenAI trademarks remain subject to the [OpenAI brand guidelines](https://openai.com/brand/).
+
+Bundled Inter and Open Sans fonts include their licence files. SF Pro uses the system font on Apple platforms and falls back on other platforms.
