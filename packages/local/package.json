@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "jose": "^6.1.0",
+    "openai": "^7.21.0",
     "proper-lockfile": "^4.1.2"
   },
   "devDependencies": {
