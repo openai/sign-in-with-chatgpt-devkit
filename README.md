@@ -1,8 +1,3 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/sign-in-with-chatgpt-white.svg">
-  <img src="assets/readme/sign-in-with-chatgpt-black.svg" alt="Sign in with ChatGPT" width="363">
-</picture>
-
 # Sign in with ChatGPT DevKit
 
 [Sign in with ChatGPT](https://learn.chatgpt.com/docs/sign-in-with-chatgpt) lets users sign in to your app with their ChatGPT account. With their permission, eligible users can also use their ChatGPT plan to power your app's AI features without setting up an API key.
@@ -15,8 +10,6 @@
 This DevKit is for developers building open-source apps that run on a user's own machine. It gives you a local Node.js SDK, React components, and design assets to integrate Sign in with ChatGPT, plus Paste Perfect, a working macOS example app you can learn from.
 
 ![Example composer menu with a ChatGPT plan indicator and Manage usage control](assets/readme/composer-plan-usage.jpg)
-
-*Example placement of ChatGPT plan usage controls in your app's composer menu.*
 
 ## Use the DevKit in your app
 
