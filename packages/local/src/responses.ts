@@ -23,7 +23,9 @@ export async function streamResponse(
     project: null,
     // Keep the SDK's default without inheriting OPENAI_LOG=debug, which can log clipboard text.
     logLevel: "warn",
+    // Report ChatGPT sharing-limit errors immediately instead of retrying HTTP 429s.
     maxRetries: 0,
+    // A redirect can forward the clipboard body to another origin.
     fetchOptions: { redirect: "error" },
     // Also prevent OPENAI_CUSTOM_HEADERS from replacing this account's credentials or tenant.
     defaultHeaders: {
