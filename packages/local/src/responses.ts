@@ -18,7 +18,6 @@ export async function streamResponse(
   // inherited from the host process. Clipboard text must never enter SDK logs.
   const client = new OpenAI({
     apiKey: accessToken,
-    adminAPIKey: null,
     baseURL: "https://api.openai.com/v1",
     organization: null,
     project: null,

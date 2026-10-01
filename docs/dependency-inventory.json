@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "source": "package-lock.json",
   "lockfileVersion": 3,
-  "lockfileSha256": "c85320e7938f07b96ce7dcd44bda30b661a8f877cf49ec8666dd2119de7bfef5",
+  "lockfileSha256": "adf9305f9965b00a3ec5c1398410fbcc461b7b6b259419515ceaffd40fb2cd0d",
   "scope": "All lockfile entries, including workspaces and platform-specific optional dependencies. Declared licences are upstream metadata, not legal clearance. Full notice text is included for runtime dependencies, Vite, the Electron npm package, and bundled fonts.",
   "electronBinaryScope": "The Electron npm package MIT licence does not cover all code in an Electron/Chromium binary. Before distributing a packaged desktop application, preserve the licences shipped in that exact Electron distribution, including LICENSE and LICENSES.chromium.html, and review any additional bundled components.",
   "packages": [
@@ -2432,35 +2432,6 @@
       "includedNoticeFiles": []
     },
     {
-      "path": "node_modules/openai",
-      "name": "openai",
-      "version": "7.21.0",
-      "declaredLicense": "Apache-2.0",
-      "resolved": "https://registry.npmjs.org/openai/-/openai-7.21.0.tgz",
-      "integrity": "sha512-APwDcMhduWCSkKDLF4VZtAC5MGLRdJ0l+PUirz2fuSPXo/LNfEe8OuJVWOk8iJbO55sd8F5aOXvx8cfR5Eax1g==",
-      "workspaceLink": false,
-      "developmentOnly": false,
-      "optional": false,
-      "os": [],
-      "cpu": [],
-      "dependencies": {},
-      "optionalDependencies": {},
-      "peerDependencies": {
-        "@aws-sdk/credential-provider-node": ">=3.972.0 <4",
-        "@smithy/hash-node": ">=4.3.0 <5",
-        "@smithy/signature-v4": ">=5.4.0 <6",
-        "undici": ">=5 <9",
-        "ws": "^8.21.0",
-        "zod": "^3.25 || ^4.0"
-      },
-      "includedNoticeFiles": [
-        {
-          "path": "node_modules/openai/LICENSE",
-          "sha256": "636eb7d79da9bb6d515a4b3fd417aa26679eb3cf16396ddab4bc55fa74e616e4"
-        }
-      ]
-    },
-    {
       "path": "node_modules/package-json-from-dist",
       "name": "package-json-from-dist",
       "version": "1.0.1",
@@ -2917,19 +2888,14 @@
       "resolved": "https://registry.npmjs.org/undici/-/undici-7.29.1.tgz",
       "integrity": "sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==",
       "workspaceLink": false,
-      "developmentOnly": false,
+      "developmentOnly": true,
       "optional": true,
       "os": [],
       "cpu": [],
       "dependencies": {},
       "optionalDependencies": {},
       "peerDependencies": {},
-      "includedNoticeFiles": [
-        {
-          "path": "node_modules/undici/LICENSE",
-          "sha256": "a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27"
-        }
-      ]
+      "includedNoticeFiles": []
     },
     {
       "path": "node_modules/undici-types",
@@ -3024,7 +2990,6 @@
       "cpu": [],
       "dependencies": {
         "jose": "^6.1.0",
-        "openai": "^7.21.0",
         "proper-lockfile": "^4.1.2"
       },
       "optionalDependencies": {},
