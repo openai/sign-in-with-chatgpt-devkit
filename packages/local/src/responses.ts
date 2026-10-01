@@ -81,7 +81,9 @@ export async function streamResponse(
     // SDK errors can contain submitted text. Only expose our sanitized diagnostics,
     // including errors the SDK raises while decoding an SSE 'error' event.
     if (error instanceof OpenAI.APIError && !(error instanceof OpenAI.APIConnectionError) && !(error instanceof OpenAI.APIUserAbortError)) {
-      throw apiError(error.error, error.status ?? response?.status, error.requestID ?? response?.headers.get("x-request-id"));
+      // The SDK also unwraps the string in an OAuth { error: "code" } response.
+      const detail = typeof error.error === "string" ? { error: error.error } : error.error;
+      throw apiError(detail, error.status ?? response?.status, error.requestID ?? response?.headers.get("x-request-id"));
     }
     if (!response) throw new ChatGPTError("network_error", "Could not reach ChatGPT. Check your connection and try again.", true);
     if (error instanceof SyntaxError) throw new ChatGPTError("invalid_stream", "The response stream contained an invalid event. Try again.", true);

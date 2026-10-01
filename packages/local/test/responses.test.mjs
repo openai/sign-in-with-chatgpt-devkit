@@ -113,6 +113,8 @@ test('rejects non-SSE success and cancels its body', async (t) => {
 
 test('HTTP admission and validation errors keep safe diagnostics and are never retried', async (t) => {
   const replies = [
+    { status: 401, body: { error: 'invalid_token', error_description: 'private clipboard text' },
+      expected: { code: 'invalid_token', retryable: false } },
     { status: 429, body: { error: { code: 'subscription_sharing_usage_limit_exceeded', message: 'private clipboard text' } },
       expected: { code: 'subscription_sharing_usage_limit_exceeded', retryable: false } },
     { status: 422, body: { detail: [{ loc: ['body', 'input'], type: 'list_type', input: 'private clipboard text' }] },
