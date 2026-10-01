@@ -70,12 +70,15 @@ for (const [name, wire, expected] of [
   ['invalid JSON', 'data: {"private clipboard text"\n\n', { code: 'invalid_stream', retryable: true }],
 ]) {
   test(`${name} never reports success or exposes server error text`, async (t) => {
+    const logs = [];
+    for (const method of ['debug', 'log', 'info', 'warn', 'error']) t.mock.method(console, method, (...args) => logs.push(args));
     t.mock.method(globalThis, 'fetch', async () => sse(wire));
     await assert.rejects(request(), (error) => {
       for (const [key, value] of Object.entries(expected)) assert.equal(error[key], value);
       assert.equal(JSON.stringify(error.toJSON()).includes('private clipboard text'), false);
       return true;
     });
+    assert.equal(JSON.stringify(logs).includes('private clipboard text'), false);
   });
 }
 

@@ -14,17 +14,18 @@ export async function streamResponse(
     throw new ChatGPTError("invalid_request", "Use text messages with user, assistant, or developer roles. Put system guidance in instructions.");
   }
 
-  // Use the active profile's OAuth token only; ignore API-key and logging settings
-  // inherited from the host process. Clipboard text must never enter SDK logs.
+  // The DevKit supplies the selected ChatGPT account's refreshed OAuth token.
+  // Leave org/project unset; they are not placeholders for a Platform API account.
   const client = new OpenAI({
     apiKey: accessToken,
     baseURL: "https://api.openai.com/v1",
     organization: null,
     project: null,
-    logLevel: "off",
+    // Keep the SDK's default without inheriting OPENAI_LOG=debug, which can log clipboard text.
+    logLevel: "warn",
     maxRetries: 0,
     fetchOptions: { redirect: "error" },
-    // OPENAI_CUSTOM_HEADERS otherwise overrides even explicit credentials/tenants.
+    // Also prevent OPENAI_CUSTOM_HEADERS from replacing this account's credentials or tenant.
     defaultHeaders: {
       authorization: `Bearer ${accessToken}`,
       "openai-organization": null,
